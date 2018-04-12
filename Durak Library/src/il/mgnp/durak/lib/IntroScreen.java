@@ -1,5 +1,5 @@
 package il.mgnp.durak.lib;
 
-public class Intro {
+public class IntroScreen {
 
 }
