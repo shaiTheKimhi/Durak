@@ -27,19 +27,28 @@ public class ClientStartScreen extends JPanel {
 	
 	private Image cards;
 	
-	private String nickname = "";
+	private String nickname;
 	
-	private String address = "";
+	private String address;
 	
 	/**
-	 * Whether the player is currently typing the nickname or the address.
+	 * The index of the line that the player is currently at.
+	 * 0 = nick name
+	 * 1 = address
+	 * 2 = continue
 	 */
-	private boolean isTypingNick = true;
+	private byte lineIndex;
 	
 	public ClientStartScreen(ClientMain main) {
 		this.main = main;
 		
 		this.cards = new ImageIcon("./resources/cards.png").getImage();
+		
+		this.nickname = "";
+		
+		this.address = "";
+		
+		this.lineIndex = 0;
 		
 		this.setPreferredSize(new Dimension(600, 600));
 		
@@ -47,18 +56,15 @@ public class ClientStartScreen extends JPanel {
 		
 		this.setOpaque(true);
 		
-		/*
-		 * The ability to write the server address.
-		 */
-		
-		setFocusable(true);
+		this.setFocusable(true);
 		
 		this.addKeyListener(new KeyAdapter() {
 			
 			@Override @SuppressWarnings("deprecation")
 			public void keyPressed(KeyEvent event) {
 				
-				if (isTypingNick) {
+				if (lineIndex == 0) {
+					
 					// Backspace
 					if (event.getKeyChar() == '\b') {
 						if (nickname.isEmpty()) {
@@ -88,11 +94,11 @@ public class ClientStartScreen extends JPanel {
 						}
 					}
 					
-					// Arrow down
-					if (event.getKeyCode() == KeyEvent.VK_DOWN) {
-						isTypingNick = false;
+					// Arrow down or enter
+					if (event.getKeyCode() == KeyEvent.VK_DOWN || event.getKeyCode() == KeyEvent.VK_ENTER) {
+						lineIndex = 1;
 					}
-				} else {
+				} else if (lineIndex == 1) {
 					// Backspace
 					if (event.getKeyChar() == '\b') {
 						if (address.isEmpty()) {
@@ -120,7 +126,21 @@ public class ClientStartScreen extends JPanel {
 					
 					// Arrow up
 					if (event.getKeyCode() == KeyEvent.VK_UP) {
-						isTypingNick = true;
+						lineIndex = 0;
+					}
+					// Arrow down or enter
+					else if (event.getKeyCode() == KeyEvent.VK_DOWN || event.getKeyCode() == KeyEvent.VK_ENTER) {
+						lineIndex = 2;
+					}
+				} else {
+					// Arrow up
+					if (event.getKeyCode() == KeyEvent.VK_UP) {
+						lineIndex = 1;
+					} 
+					// Enter
+					else if (event.getKeyCode() == KeyEvent.VK_ENTER) {
+						// TODO: Attempt to connect...
+						
 					}
 				}
 				
@@ -149,26 +169,42 @@ public class ClientStartScreen extends JPanel {
 		g.setFont(font);
 		g.setColor(Color.BLACK);
 		
-		String text = "Welcome to Durak!";
-		int width = g.getFontMetrics().stringWidth(text);
+		g.drawString("Welcome to Durak!", 80, 400);
 		
-		g.drawString(text, (int) (600 - width) / 2, 400);
-		
+		// Line 0
 		font = new Font("Comic Sans MS", Font.PLAIN, 36);
 		g.setFont(font);
-		g.setColor(this.isTypingNick ? Color.RED : Color.BLACK);
 		
-		text = "Nick name: " + this.nickname;
-		width = g.getFontMetrics().stringWidth(text);
+		g.setColor(lineIndex == 0 ? Color.RED : Color.BLACK);
+		
+		String text = "Nick name: " + this.nickname;
+		int width = g.getFontMetrics().stringWidth(text);
 		
 		g.drawString(text, (int) (600 - width) / 2, 450);
 		
-		g.setColor(this.isTypingNick ? Color.BLACK : Color.RED);
+		// Line 1
+		g.setColor(lineIndex == 1 ? Color.RED : Color.BLACK);
 		
 		text = "Address: " + this.address;
 		width = g.getFontMetrics().stringWidth(text);
 		
 		g.drawString(text, (int) (600 - width) / 2, 490);
+		
+		// Line 2
+		font = new Font("Comic Sans MS", Font.BOLD, 48);
+		g.setFont(font);
+		
+		g.setColor(lineIndex == 2 ? Color.RED : Color.BLACK);
+		
+		g.drawString("Continue", 204, 550);
+		
+		// Copyright
+		font = new Font("Comic Sans MS", Font.BOLD, 12);
+		g.setFont(font);
+		
+		g.setColor(Color.WHITE);
+		
+		g.drawString("Copyright © 2018 MGNP", 2, 598);
 	}
 	
 	
