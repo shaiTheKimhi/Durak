@@ -17,6 +17,6 @@ public class Packet implements Serializable {
 	
 	@Override
 	public String toString() {
-		return String.format("$%s:%s$", this.command, this.value.toString());
+		return String.format("P[%s:%s]", this.command, this.value.toString());
 	}
 }
